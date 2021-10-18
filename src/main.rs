@@ -70,7 +70,7 @@ impl EventHandler for Handler {
         let msg_s = (&c.report_channel)
             .send_message(&ctx.http, |m| {
                 m.embed(|e| {
-                    e.title("violation detected")
+                    e.title(":x: violation detected")
                         .colour(0xee0000)
                         .field(
                             "user",
