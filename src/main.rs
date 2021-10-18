@@ -77,8 +77,7 @@ impl EventHandler for Handler {
 
         // NOTE:
         // あまりに長いSPAMを送られるとそれ自身をメッセージに含むのでレポートできない可能性がある
-        let msg_s = c
-            .report_channel
+        let msg_s = (&c.report_channel)
             .send_message(&ctx.http, |m| {
                 m.embed(|e| {
                     e.title("violation detected")
