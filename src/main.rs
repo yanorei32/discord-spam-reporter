@@ -51,14 +51,9 @@ impl EventHandler for Handler {
 
         let c = CONFIG.get().unwrap();
 
-        match &msg.guild_id {
-            Some(v) => {
-                if v != &c.guild {
-                    return;
-                }
-            }
-            None => return,
-        };
+        if (&msg.guild_id).filter(|v| v == &c.guild).is_none() {
+            return;
+        }
 
         let notes: Vec<&str> = (&c.filters)
             .into_iter()
