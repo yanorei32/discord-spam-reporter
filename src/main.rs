@@ -56,8 +56,8 @@ impl EventHandler for Handler {
         }
 
         let notes: Vec<&str> = (&c.filters)
-            .into_iter()
-            .filter(|s| (&s).pattern.is_match(&msg.content))
+            .iter()
+            .filter(|s| s.pattern.is_match(&msg.content))
             .map(|s| s.note.as_str())
             .collect();
 
@@ -86,7 +86,7 @@ impl EventHandler for Handler {
                             "violation(s)",
                             MessageBuilder::new().push_codeblock_safe(
                                 (&notes)
-                                    .into_iter()
+                                    .iter()
                                     .map(|s| format!("- {}", s))
                                     .collect::<Vec<String>>()
                                     .join("\n"),
