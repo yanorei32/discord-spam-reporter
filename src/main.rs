@@ -11,7 +11,7 @@ use serenity::{
     model::{
         channel::Message,
         gateway::Ready,
-        id::{ChannelId, GuildId},
+        id::{ChannelId, GuildId, RoleId},
     },
     prelude::*,
     utils::MessageBuilder,
@@ -19,6 +19,7 @@ use serenity::{
 
 mod parse_channel_id;
 mod parse_guild_id;
+mod parse_role_id;
 mod parse_regexp;
 
 #[derive(Debug, Deserialize)]
@@ -28,6 +29,8 @@ struct Config {
     report_channel: ChannelId,
     #[serde(with = "parse_guild_id")]
     guild: GuildId,
+    #[serde(with = "parse_role_id")]
+    role: RoleId,
     filters: Vec<Filter>,
 }
 
@@ -65,6 +68,12 @@ impl EventHandler for Handler {
             return;
         }
 
+        let notes = notes
+            .iter()
+            .map(|s| format!("- {}", s))
+            .collect::<Vec<String>>()
+            .join("\n");
+
         // NOTE:
         // あまりに長いSPAMを送られるとそれ自身をメッセージに含むのでレポートできない可能性がある
         let msg_s = (&c.report_channel)
@@ -85,11 +94,7 @@ impl EventHandler for Handler {
                         .field(
                             "violation(s)",
                             MessageBuilder::new().push_codeblock_safe(
-                                (&notes)
-                                    .iter()
-                                    .map(|s| format!("- {}", s))
-                                    .collect::<Vec<String>>()
-                                    .join("\n"),
+                                &notes,
                                 None,
                             ),
                             false,
@@ -106,6 +111,16 @@ impl EventHandler for Handler {
         if let Err(why) = msg_s {
             println!("Error sending message: {:?}", why);
         }
+
+        // TODO: メッセージの削除
+        if let Err(why) = msg.delete(&ctx.http).await {
+            println!("Error deleting message: {:?}", why);
+        };
+
+        let mut member = c.guild.member(&ctx.http, &msg.author.id).await.unwrap();
+        if let Err(why) = member.add_role(&ctx.http, &c.role).await {
+            println!("Error adding a role: {:?}", why);
+        };
     }
 
     async fn ready(&self, _: Context, ready: Ready) {
