@@ -1,3 +1,5 @@
+#![warn(clippy::pedantic, clippy::nursery)]
+
 use std::env;
 use std::fs::File;
 use std::io::BufReader;
@@ -67,6 +69,8 @@ impl EventHandler for Handler {
 
         // NOTE:
         // あまりに長いSPAMを送られるとそれ自身をメッセージに含むのでレポートできない可能性がある
+        // 色は6桁続いていたほうが読みやすい
+        #[allow(clippy::unreadable_literal)]
         let msg_s = (&c.report_channel)
             .send_message(&ctx.http, |m| {
                 m.embed(|e| {
