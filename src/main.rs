@@ -30,7 +30,7 @@ struct Config {
     report_channel: ChannelId,
     #[serde(with = "parse_guild_id")]
     guild: GuildId,
-    filters: Vec<Filter>,
+    rules: Vec<Filter>,
 }
 
 #[derive(Debug, Deserialize)]
