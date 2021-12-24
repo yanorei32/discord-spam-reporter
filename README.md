@@ -19,7 +19,7 @@ guild: 918273645647382910
 token: "Your token here"
 # patternには正規表現を指定する。
 # 正規表現の書式は https://docs.rs/regex/1.5.4/regex/#syntax を参照。
-filters:
+rules:
   - pattern: ".+"
     note: "何らかのメッセージ"
   - pattern: "free +nitro"
